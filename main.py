@@ -10,7 +10,8 @@ NAME = "rename_user"
 PREFIX = "!r"
 commands = {}
 
-server_id = os.environ["server_id"]
+# server_id = os.environ["server_id"]
+server = ""
 
 def _get_server_obj(server_id):
     logger.debug(server_id)
@@ -19,7 +20,7 @@ def _get_server_obj(server_id):
 
 def _get_user_obj(user_id):
     logger.debug(user_id)
-    user = discord.Server.get_member(_get_server_obj(server_id), user_id)
+    user = discord.Server.get_member(server, user_id)
     return user
 
 def load_config(path):
@@ -30,17 +31,17 @@ def save_config(path, config):
     with open(path, 'w') as f:
         f.write(json.dump(config))
 
-def find_member(nickname, server):
+def find_member(nickname):
     member = discord.utils.get(server.members, display_name=nickname)
     return member
 
 
 async def change_nickname(message, nickname, user_id):
     user = _get_user_obj(user_id)
-    server = _get_server_obj(server_id)
+    # server = _get_server_obj(server_id)
     owner = server.owner
     if owner == user:
-        await client.send_message(message.channel, "User {} is the server owner, you can't rename them.".format(owner.display_name))
+        await client.send_message(message.channel, "I don't have permission to change this users nickname")
         return
     await client.change_nickname(user, nickname)
 
@@ -56,7 +57,7 @@ def cmd(func):
 async def rename(message, name, *args):
     nickname = ' '.join(args)
     logger.debug("Nickname: {}".format(nickname))
-    server = _get_server_obj(server_id)
+    # server = _get_server_obj(server_id)
     try:
         user_id = (find_member(name, server)).id
     except AttributeError:
@@ -100,6 +101,8 @@ async def on_message(message):
         logger.debug(1)
         return new_items
 
+    global server
+    server = message.server
 
     if message.author.id == client.user.id:
         return
