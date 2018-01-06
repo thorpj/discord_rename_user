@@ -73,13 +73,35 @@ async def on_ready():
     #await main()
 
 
+
+
+
 @client.event
 async def on_message(message):
+    def interpret_delimited_items(text, ignore_items, delimiter):
+        items = text.split(" ")
+        items = [item for item in items if item not in ignore_items]
+        new_items = []
+        new_item = []
+        for item in items:
+            if item == delimiter:
+                new_items.append(new_item)
+                new_item = []
+            else:
+                new_item.append(item)
+        return new_items
+
+
     if message.author.id == client.user.id:
         return
     text = message.content
     if text.startswith(PREFIX):
         cmd, *args = text[2:].split()
+        if cmd == "rename":
+            nicknames = interpret_delimited_items(text, [PREFIX, cmd], "->")
+            current_nickname = nicknames[0]
+            new_nickname = nicknames[1]
+            args = [current_nickname, new_nickname]
     else:
         return
     if cmd in commands:
