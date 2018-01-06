@@ -35,13 +35,15 @@ def find_member(nickname, server):
     return member
 
 
-async def change_nickname(nickname, user_id):
+async def change_nickname(message, nickname, user_id):
     user = _get_user_obj(user_id)
-    print(user.id, user.name)
-    try:
-        await client.change_nickname(user, nickname)
-    except discord.Forbidden:
-        logger.debug("The nickname of user [name: {}, id: {}] cannot be changed: forbidden. This is most likely because they are the server owner, or this bot does not have the correct permissions to change their nickname.".format(user.name, user.id))
+    server = _get_server_obj(server_id)
+    owner = server.owner
+    if owner == user:
+        await client.send_message(message.channel, "User {} is the server owner, you can't rename them.".format(owner.display_name))
+        return
+    await client.change_nickname(user, nickname)
+
 
 
 def cmd(func):
@@ -55,8 +57,12 @@ async def rename(message, name, *args):
     nickname = ' '.join(args)
     logger.debug("Nickname: {}".format(nickname))
     server = _get_server_obj(server_id)
-    user_id = (find_member(name, server)).id
-    await change_nickname(nickname, user_id)
+    try:
+        user_id = (find_member(name, server)).id
+    except AttributeError:
+        await client.send_message(message.channel, "Could not find user: {}.".format(name))
+        return
+    await change_nickname(message, nickname, user_id)
 
 async def main():
     pass
