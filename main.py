@@ -10,7 +10,7 @@ NAME = "rename_user"
 PREFIX = "!r"
 commands = {}
 
-server_id = os.environ["discord_rename_user_server_id"]
+server_id = os.environ["server_id"]
 
 def _get_server_obj(server_id):
     logger.debug(server_id)
@@ -81,7 +81,7 @@ async def on_message(message):
 
 
 #config = load_config(cfg_path)
-token = os.environ["discord_rename_user_token"]
+token = os.environ["token"]
 client.run(token)
 
 
