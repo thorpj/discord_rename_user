@@ -64,6 +64,12 @@ async def rename(message, name, *args):
         return
     await change_nickname(message, nickname, user_id)
 
+@cmd
+async def help(message, *args):
+    with open("help.txt", 'r') as f:
+        help_message = f.read()
+        await client.send_message(message.channel, help_message)
+
 async def main():
     pass
 
@@ -85,10 +91,13 @@ async def on_message(message):
         new_item = []
         for item in items:
             if item == delimiter:
-                new_items.append(new_item)
+                new_items.append(' '.join(new_item))
+                logger.debug(' '.join(new_item))
                 new_item = []
             else:
                 new_item.append(item)
+        new_items.append(' '.join(new_item))
+        logger.debug(1)
         return new_items
 
 
@@ -99,8 +108,15 @@ async def on_message(message):
         cmd, *args = text[2:].split()
         if cmd == "rename":
             nicknames = interpret_delimited_items(text, [PREFIX, cmd], "->")
+            logger.debug(nicknames)
+            if len(nicknames) < 2:
+                await client.send_message(message.channel, "Invalid input, see '{} help'".format(PREFIX))
+                return
             current_nickname = nicknames[0]
             new_nickname = nicknames[1]
+            if current_nickname == new_nickname:
+                await client.send_message(message.channel, "Maybe try renaming them to something different?")
+                return
             args = [current_nickname, new_nickname]
     else:
         return

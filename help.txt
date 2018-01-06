@@ -1,0 +1,14 @@
+.
+NAME
+        discord_rename_user - A Discord bot that be used to change a users server nickname
+
+SYNOPSIS
+        !r [rename $current_nickname -> $new_nickname]
+        !r help
+
+EXAMPLES
+        !r rename $current_nickname -> $new_nickname
+            Rename the user with $current_nickname to $new_nickname
+        !r help
+            Outputs this help message
+   
