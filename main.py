@@ -59,7 +59,7 @@ async def rename(message, name, *args):
     logger.debug("Nickname: {}".format(nickname))
     # server = _get_server_obj(server_id)
     try:
-        user_id = (find_member(name, server)).id
+        user_id = (find_member(name)).id
     except AttributeError:
         await client.send_message(message.channel, "Could not find user: {}.".format(name))
         return
