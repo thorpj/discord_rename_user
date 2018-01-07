@@ -61,7 +61,6 @@ def cmd(func):
 
 @cmd
 async def rename(message, current_nickname, new_nickname):
-    logger.debug("Nickname: {}".format(nickname))
     # server = _get_server_obj(server_id)
     try:
         user = find_member_by_nickname(name)
