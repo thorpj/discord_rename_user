@@ -1,4 +1,4 @@
-import discord, json, asyncio, os
+import discord, json, asyncio, os, re
 from log_conf import logger
 
 
@@ -96,9 +96,6 @@ async def on_ready():
     #await main()
 
 
-
-
-
 @client.event
 async def on_message(message):
     def interpret_delimited_items(text, ignore_items, delimiter):
@@ -107,9 +104,13 @@ async def on_message(message):
         new_items = []
         new_item = []
         for item in items:
-            if item == "\{}".format(delimiter):
-                    new_item.append(item[1:])
-                    continue
+            regexp = re.compile(r'(\\)(.*'))
+            resexp = regexp.search(item)
+            if resexp:
+                item.replace(resexp.group(1), "")
+                logger.debug(item)
+                new_item.append(item)
+                continue
             if item == delimiter:
                 new_items.append(' '.join(new_item))
                 logger.debug(' '.join(new_item))
