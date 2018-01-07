@@ -7,7 +7,7 @@ SYNOPSIS
         !r help
 
 EXAMPLES
-        !r rename $current_nickname -> $new_nickname
+        !r rename $current_nickname to $new_nickname
             Rename the user with $current_nickname to $new_nickname. If you want to use 'to' in someone's nickname, type a backslash before it like so, '\to'
         !r help
             Outputs this help message
