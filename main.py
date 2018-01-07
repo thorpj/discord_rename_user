@@ -42,6 +42,8 @@ def find_member_by_servername(servername):
 async def change_nickname(message, nickname, user):
     # user = _get_user_obj(user_id)
     # server = _get_server_obj(server_id)
+    if not user:
+        await client.send_message(message.channel, "Invalid command, see {} help".format(PREFIX))
     owner = server.owner
     if owner == user:
         await client.send_message(message.channel, "I don't have permission to change this users nickname.")
@@ -107,6 +109,7 @@ async def on_message(message):
             logger.debug("%r" % item)
             logger.debug(item)
             if item == "\{}".format(delimiter):
+                logger.debug(11111111111111)
                 item.replace("\\", "")
                 new_item.append(item)
                 logger.debug(item)
