@@ -76,7 +76,7 @@ async def reset(message, servername):
     try:
         user = find_member_by_servername(servername)
     except AttributeError:
-        await client.send_message(message.channel, "Could not find user with servername: {}.".format(servername)
+        await client.send_message(message.channel, "Could not find user with servername: {}.".format(servername))
         return
     await change_nickname(message, servername, user)
     
