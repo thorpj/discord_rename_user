@@ -31,17 +31,23 @@ def save_config(path, config):
     with open(path, 'w') as f:
         f.write(json.dump(config))
 
-def find_member(nickname):
-    member = discord.utils.get(server.members, display_name=nickname)
-    return member
+def find_member_by_nickname(nickname):
+    user = discord.utils.get(server.members, display_name=nickname)
+    return user
 
+def find_member_by_servername(servername):
+    user = discord.utils.get(server.members, name=servername)
+    return user
 
-async def change_nickname(message, nickname, user_id):
-    user = _get_user_obj(user_id)
+async def change_nickname(message, nickname, user):
+    # user = _get_user_obj(user_id)
     # server = _get_server_obj(server_id)
     owner = server.owner
     if owner == user:
-        await client.send_message(message.channel, "I don't have permission to change this users nickname")
+        await client.send_message(message.channel, "I don't have permission to change this users nickname.")
+        return
+    if client.user == user:
+        await client.send_message(message.channel, "You can't rename me.")
         return
     await client.change_nickname(user, nickname)
 
@@ -54,22 +60,33 @@ def cmd(func):
     return dec
 
 @cmd
-async def rename(message, name, *args):
-    nickname = ' '.join(args)
+async def rename(message, current_nickname, new_nickname):
     logger.debug("Nickname: {}".format(nickname))
     # server = _get_server_obj(server_id)
     try:
-        user_id = (find_member(name)).id
+        user = find_member_by_nickname(name)
     except AttributeError:
-        await client.send_message(message.channel, "Could not find user: {}.".format(name))
+        await client.send_message(message.channel, "Could not find user with nickname: {}.".format(name))
         return
-    await change_nickname(message, nickname, user_id)
+    await change_nickname(message, nickname, user)
+
+
+@cmd 
+async def reset(message, servername):
+    try:
+        user = find_member_by_servername(servername)
+    except AttributeError:
+        await client.send_message(message.channel, "Could not find user with servername: {}.".format(servername)
+        return
+    await change_nickname(message, servername, user)
+    
 
 @cmd
 async def help(message, *args):
     with open("help.txt", 'r') as f:
         help_message = f.read()
         await client.send_message(message.channel, help_message)
+
 
 async def main():
     pass
@@ -100,6 +117,8 @@ async def on_message(message):
         new_items.append(' '.join(new_item))
         logger.debug(1)
         return new_items
+    async def reply_invalid_input():
+        await client.send_message(message.channel, "Invalid input, see '{} help'".format(PREFIX))
 
     global server
     server = message.server
@@ -110,10 +129,10 @@ async def on_message(message):
     if text.startswith(PREFIX):
         cmd, *args = text[2:].split()
         if cmd == "rename":
-            nicknames = interpret_delimited_items(text, [PREFIX, cmd], "->")
+            nicknames = interpret_delimited_items(text, [PREFIX, cmd], "to")
             logger.debug(nicknames)
             if len(nicknames) < 2:
-                await client.send_message(message.channel, "Invalid input, see '{} help'".format(PREFIX))
+                await reply_invalid_input()
                 return
             current_nickname = nicknames[0]
             new_nickname = nicknames[1]
@@ -121,6 +140,11 @@ async def on_message(message):
                 await client.send_message(message.channel, "Maybe try renaming them to something different?")
                 return
             args = [current_nickname, new_nickname]
+        if cmd == "reset":
+            servername = ' '.join(args)
+            if not servername:
+                await reply_invalid_input()
+
     else:
         return
     if cmd in commands:
