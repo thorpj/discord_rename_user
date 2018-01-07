@@ -108,9 +108,9 @@ async def on_message(message):
         for item in items:
             logger.debug("%r" % item)
             logger.debug(item)
-            if item == "\{}".format(delimiter):
+            if item == "\\{}".format(delimiter):
                 logger.debug(11111111111111)
-                item.replace("\\", "")
+                item = item.replace("\\", "")
                 new_item.append(item)
                 logger.debug(item)
                 continue
