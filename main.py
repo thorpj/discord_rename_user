@@ -104,12 +104,12 @@ async def on_message(message):
         new_items = []
         new_item = []
         for item in items:
-            regexp = re.compile(r'(\\)(.*)')
-            resexp = regexp.search(item)
-            if resexp:
-                item.replace(resexp.group(1), "")
-                logger.debug(item)
+            logger.debug("%r" % item)
+            logger.debug(item)
+            if item == "\{}".format(delimiter):
+                item.replace("\\", "")
                 new_item.append(item)
+                logger.debug(item)
                 continue
             if item == delimiter:
                 new_items.append(' '.join(new_item))
