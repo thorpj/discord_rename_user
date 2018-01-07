@@ -43,7 +43,7 @@ async def change_nickname(message, nickname, user):
     # user = _get_user_obj(user_id)
     # server = _get_server_obj(server_id)
     if not user:
-        await client.send_message(message.channel, "Invalid command, see {} help".format(PREFIX))
+        await client.send_message(message.channel, "User not found, see {} help".format(PREFIX))
     owner = server.owner
     if owner == user:
         await client.send_message(message.channel, "I don't have permission to change this users nickname.")
