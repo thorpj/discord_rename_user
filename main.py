@@ -108,7 +108,7 @@ async def on_message(message):
         new_item = []
         for item in items:
             if item == delimiter:
-                if item = "\delimiter":
+                if item == "\delimiter":
                     new_item.append(item[1:])
                     continue
                 new_items.append(' '.join(new_item))
