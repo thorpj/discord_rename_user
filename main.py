@@ -104,7 +104,7 @@ async def on_message(message):
         new_items = []
         new_item = []
         for item in items:
-            regexp = re.compile(r'(\\)(.*'))
+            regexp = re.compile(r'(\\)(.*)')
             resexp = regexp.search(item)
             if resexp:
                 item.replace(resexp.group(1), "")
