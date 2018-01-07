@@ -63,11 +63,11 @@ def cmd(func):
 async def rename(message, current_nickname, new_nickname):
     # server = _get_server_obj(server_id)
     try:
-        user = find_member_by_nickname(name)
+        user = find_member_by_nickname(current_nickname)
     except AttributeError:
-        await client.send_message(message.channel, "Could not find user with nickname: {}.".format(name))
+        await client.send_message(message.channel, "Could not find user with nickname: {}.".format(current_nickname))
         return
-    await change_nickname(message, nickname, user)
+    await change_nickname(message, new_nickname, user)
 
 
 @cmd 
