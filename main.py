@@ -39,20 +39,27 @@ def find_member_by_servername(servername):
     user = discord.utils.get(server.members, name=servername)
     return user
 
+async def send_message(channel, content, remove_time=5):
+    message = await client.send_message(channel, content)
+    if remove_time:
+        time.sleep(remove_time)
+    await client.delete_message(message)
+
+
 async def change_nickname(message, nickname, user):
     # user = _get_user_obj(user_id)
     # server = _get_server_obj(server_id)
     if not user:
-        await client.send_message(message.channel, "User not found, see {} help".format(PREFIX))
+        await send_message(message.channel, "User not found, see {} help".format(PREFIX))
     owner = server.owner
     if owner == user:
-        await client.send_message(message.channel, "I don't have permission to change this users nickname.")
+        await send_message(message.channel, "I don't have permission to change this users nickname.")
         return
     if client.user == user:
         current_nickname = client.user.display_name
         await client.change_nickname(user, nickname)
         time.sleep(4)
-        await client.send_message(message.channel, "Oh no, I think i'm having a meltdown")
+        await send_message(message.channel, "Oh no, I think i'm having a meltdown")
         await client.change_nickname(user, current_nickname)
         return
     await client.change_nickname(user, nickname)
@@ -71,7 +78,7 @@ async def rename(message, current_nickname, new_nickname):
     try:
         user = find_member_by_nickname(current_nickname)
     except AttributeError:
-        await client.send_message(message.channel, "Could not find user with nickname: {}.".format(current_nickname))
+        await send_message(message.channel, "Could not find user with nickname: {}.".format(current_nickname))
         return
     await change_nickname(message, new_nickname, user)
 
@@ -81,7 +88,7 @@ async def reset(message, servername):
     try:
         user = find_member_by_servername(servername)
     except AttributeError:
-        await client.send_message(message.channel, "Could not find user with servername: {}.".format(servername))
+        await send_message(message.channel, "Could not find user with servername: {}.".format(servername))
         return
     await change_nickname(message, servername, user)
     
@@ -90,7 +97,7 @@ async def reset(message, servername):
 async def help(message, *args):
     with open("help.txt", 'r') as f:
         help_message = f.read()
-        await client.send_message(message.channel, help_message)
+        await send_message(message.channel, help_message)
 
 
 async def main():
@@ -128,7 +135,7 @@ async def on_message(message):
         logger.debug(1)
         return new_items
     async def reply_invalid_input():
-        await client.send_message(message.channel, "Invalid input, see '{} help'".format(PREFIX))
+        await send_message(message.channel, "Invalid input, see '{} help'".format(PREFIX))
 
     global server
     server = message.server
@@ -147,7 +154,7 @@ async def on_message(message):
             current_nickname = nicknames[0]
             new_nickname = nicknames[1]
             if current_nickname == new_nickname:
-                await client.send_message(message.channel, "Maybe try renaming them to something different?")
+                await send_message(message.channel, "Maybe try renaming them to something different?")
                 return
             args = [current_nickname, new_nickname]
         if cmd == "reset":
@@ -159,6 +166,7 @@ async def on_message(message):
         return
     if cmd in commands:
         await commands[cmd](message, *args)
+    await client.delete_message(message)
 
 
 #config = load_config(cfg_path)
