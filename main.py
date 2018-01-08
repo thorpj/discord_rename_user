@@ -1,4 +1,4 @@
-import discord, json, asyncio, os, re
+import discord, json, asyncio, os, re, time
 from log_conf import logger
 
 
@@ -49,7 +49,11 @@ async def change_nickname(message, nickname, user):
         await client.send_message(message.channel, "I don't have permission to change this users nickname.")
         return
     if client.user == user:
-        await client.send_message(message.channel, "You can't rename me.")
+        current_nickname = client.user.display_name
+        await client.change_nickname(user, nickname)
+        time.sleep(4)
+        await client.send_message(message.channel, "Oh no, I think i'm having a meltdown")
+        await client.change_nickname(user, current_nickname)
         return
     await client.change_nickname(user, nickname)
 
