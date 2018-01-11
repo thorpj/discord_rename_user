@@ -60,6 +60,7 @@ async def change_nickname(message, nickname, user):
         await client.change_nickname(user, nickname)
         time.sleep(4)
         await send_message(message.channel, "Oh no, I think i'm having a meltdown")
+        time.sleep()
         await client.change_nickname(user, current_nickname)
         return
     await client.change_nickname(user, nickname)
